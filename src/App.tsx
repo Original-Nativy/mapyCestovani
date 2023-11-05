@@ -2,7 +2,7 @@ import React, {
     useEffect, useRef, useState,
 } from 'react';
 import {
-    MapContainer, TileLayer, GeoJSON, Marker, Popup,
+    MapContainer, TileLayer, GeoJSON, Marker, Popup, LayerGroup, LayersControl,
 } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';;
 import 'leaflet/dist/leaflet.css';
@@ -65,14 +65,41 @@ function App() {
                 center.y,
                 center.x,
             ]}
-            zoom={10}
+            zoom={13}
             style={{
                 width: '100vw',
                 height: '100vh',
             }}
         >
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+
+            <LayersControl position="topright">
+                <LayersControl.Overlay
+                    name ='Ahojda'
+                    checked={true}
+                >
+                    <TileLayer
+                        url='https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg'
+            	        minZoom= {1}
+                        maxZoom= {16}
+                    />
+                </LayersControl.Overlay>
+                <LayersControl.Overlay name="Marker with popup">
+                    <Marker
+                        position={[
+                            center.y,
+                            center.x,
+                        ]}
+                        icon = {greenIcon}
+                    >
+                        <Popup>
+                            A pretty CSS3 popup. <br /> Easily customizable.
+                        </Popup>
+                    </Marker>
+                </LayersControl.Overlay>
+            </LayersControl>
+
         </MapContainer>
     );
 }
 export default App;
+
