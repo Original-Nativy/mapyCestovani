@@ -2,9 +2,8 @@ import React, {
     useEffect, useRef, useState,
 } from 'react';
 import {
-    MapContainer, TileLayer, GeoJSON, Marker, Popup,
+    MapContainer, TileLayer, GeoJSON, Marker, Popup, LayersControl,
 } from 'react-leaflet';
-import MarkerClusterGroup from 'react-leaflet-cluster';
 import { malaysia } from './geomaps/Malaysia';
 import { indonesia } from './geomaps/Indonesia';
 import { thailand } from './geomaps/Thailand';
@@ -16,15 +15,15 @@ import { maldives } from './geomaps/Maldives';
 import { airportsAll } from './geomaps/AirportsAll';
 import { uae } from './geomaps/Uae';
 import { israel } from './geomaps/israel';
-// import { airports } from './geomaps/Airports';
 import 'leaflet/dist/leaflet.css';
 import Coordinates, {
     Feature, FeatureMalay, AirportsAll,
 } from './interfaces/Coordinates';
 import './App.css';
-import L, {
-    Layer, LeafletMouseEvent, Icon,
+import {
+    Layer, LeafletMouseEvent,
 } from 'leaflet';
+import { returnMarkers } from './components/CreateAirports';
 
 
 function App() {
@@ -126,60 +125,18 @@ function App() {
         });
     };
 
-    const greenIcon = new Icon({
-        iconUrl: '/plane.png',
-        iconSize: [
-            10,
-            20,
-        ],
-        iconAnchor: [
-            3,
-            10,
-        ],
-        popupAnchor: [
-            0,
-            -5,
-        ],
-    });
-
-    const returnMarkers = () =>{
-        const lMarkers = airpotAll ? airpotAll.features.filter(objekt =>
-            objekt.properties.country === 'Thailand' ||
-            objekt.properties.country === 'Philippines' ||
-            objekt.properties.country === 'Maldives' ||
-            objekt.properties.country === 'Taiwan' ||
-            objekt.properties.country === 'Indonesia' ||
-            objekt.properties.country === 'Vietnam' ||
-            objekt.properties.country === 'United Arab Emirates' ||
-            objekt.properties.country === 'Israel' ||
-            objekt.properties.country === 'Hong Kong'): [];
-        return (lMarkers.map((marker, id) => (
-            <Marker
-                key={id}
-                position={[
-                    marker.geometry.coordinates[1],
-                    marker.geometry.coordinates[0],
-                ]}
-                icon={greenIcon}
-            >
-                <Popup>
-                    <p>Název: {marker.properties.name_Air ?? marker.properties.city}</p>
-                    <p>Země: {marker.properties.country}</p>
-                </Popup>
-                {/* {marker.properties.name &&
-                    <Tooltip
-                        direction="bottom"
-                        offset={[
-                            0,
-                            0,
-                        ]}
-                        opacity={1}
-                        permanent
-                    >{marker.properties.name_en ?? marker.properties.name}</Tooltip>
-                } */}
-            </Marker>
-        )));
-    };
+    const arrayOfCountries = [
+        'Thailand',
+        'Philippines',
+        'Maldives',
+        'Malaysia',
+        'Taiwan',
+        'Indonesia',
+        'Vietnam',
+        'United Arab Emirates',
+        'Israel',
+        'Hong Kong',
+    ];
 
     return (
         <MapContainer
@@ -193,31 +150,58 @@ function App() {
                 height: '100vh',
             }}
         >
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            {Object.entries(allMaps).map(([
-                key,
-                value,
-            ], index) => (
-                <GeoJSON
-                    key={key}
-                    data={{
-                        type: 'FeatureCollection',
-                        features: value,
-                    }as GeoJSON.GeoJsonObject}
+            <LayersControl position="topright">
+                {Object.entries(allMaps).map(([
+                    key,
+                    value,
+                ], index) => (
+                    <LayersControl.Overlay
+                        key={index}
+                        name={key}
+                    >
+                        <GeoJSON
+                            key={key}
+                            data={{
+                                type: 'FeatureCollection',
+                                features: value,
+                            }as GeoJSON.GeoJsonObject}
 
-                    onEachFeature={onEachCountry}
-                    style={{
-                        color: `${allColors[index]}`,
-                        fillColor: `${allColors[index]}`,
-                        fillOpacity: 0.4,
-                    }}
-                />
-            ))}
-            <MarkerClusterGroup
-                chunkedLoading
-            >
-                {returnMarkers()}
-            </MarkerClusterGroup>
+                            onEachFeature={onEachCountry}
+                            style={{
+                                color: `${allColors[index]}`,
+                                fillColor: `${allColors[index]}`,
+                                fillOpacity: 0.4,
+                            }}
+                        />
+                    </LayersControl.Overlay>
+                ))}
+                <LayersControl.BaseLayer
+                    name ='Streets'
+                >
+                    <TileLayer
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            	        minZoom= {1}
+                        maxZoom= {13}
+                    />
+                </LayersControl.BaseLayer>
+                <LayersControl.BaseLayer
+                    name ='Empty'
+                    checked
+                >
+                    <TileLayer
+                        url='https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png'
+            	        minZoom= {1}
+                        maxZoom= {13}
+                    />
+                </LayersControl.BaseLayer>
+                <LayersControl.Overlay
+                    name='Airports'
+                >
+                    {arrayOfCountries.map(country => (
+                        returnMarkers(airpotAll, country)))}
+
+                </LayersControl.Overlay>
+            </LayersControl>
         </MapContainer>
     );
 }
