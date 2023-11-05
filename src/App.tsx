@@ -44,7 +44,7 @@ function App() {
     ]=useState<string[]>([]);
 
     const greenIcon = new Icon({
-        iconUrl: 'marker/plane.png',
+        iconUrl: '/location.png',
         iconSize: [
             10,
             20,
@@ -55,7 +55,7 @@ function App() {
         ],
         popupAnchor: [
             0,
-            -5,
+            -20,
         ],
     });
 
