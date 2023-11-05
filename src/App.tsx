@@ -5,8 +5,8 @@ import {
     MapContainer, TileLayer, GeoJSON, Marker, Popup,
 } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';;
-// import { airports } from './geomaps/Airports';
 import 'leaflet/dist/leaflet.css';
+import  Coordinates  from './interface/Coordinates';
 import './App.css';
 import L, {
     Layer, LeafletMouseEvent, Icon,
