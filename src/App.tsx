@@ -127,7 +127,7 @@ function App() {
     };
 
     const greenIcon = new Icon({
-        iconUrl: 'marker/plane.png',
+        iconUrl: '/plane.png',
         iconSize: [
             10,
             20,
@@ -218,20 +218,6 @@ function App() {
             >
                 {returnMarkers()}
             </MarkerClusterGroup>
-            {/* <GeoJSON
-                key={'airports'}
-                data={{
-                    type: 'FeatureCollection',
-                    features: airportFeature,
-                }as GeoJSON.GeoJsonObject}
-
-                style={{
-                    color: 'black',
-                    fillColor: 'black',
-                    fillOpacity: 0.4,
-                }}
-            /> */}
-
         </MapContainer>
     );
 }
