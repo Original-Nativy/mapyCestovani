@@ -2,7 +2,7 @@ import React, {
     useEffect, useRef, useState,
 } from 'react';
 import {
-    MapContainer, TileLayer, GeoJSON, Marker, Popup, LayerGroup, LayersControl,
+    MapContainer, TileLayer, GeoJSON, Marker, Popup, LayerGroup, LayersControl, WMSTileLayer,
 } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';;
 import 'leaflet/dist/leaflet.css';
@@ -43,6 +43,23 @@ function App() {
         setAllColors,
     ]=useState<string[]>([]);
 
+    const geoServerIPPort = 'localhost:3000';
+    const geoServerWorkspace = 'GIS';
+    const stateLayerName = 'GIS:ins_st';
+
+    const indStateLayer = L.tileLayer.wms (
+        'http://' + geoServerIPPort + '/geoserver/' + geoServerWorkspace + '/wms',
+        {
+            layers: stateLayerName,
+            format: 'image/png',
+            transparent: true,
+            version: '1.1.0',
+        },
+    );
+    const overlayMaps = {
+        'India States': indStateLayer,
+    };
+
     const greenIcon = new Icon({
         iconUrl: '/location.png',
         iconSize: [
@@ -66,6 +83,7 @@ function App() {
                 center.x,
             ]}
             zoom={13}
+            maxZoom={13}
             style={{
                 width: '100vw',
                 height: '100vh',
@@ -73,16 +91,26 @@ function App() {
         >
 
             <LayersControl position="topright">
-                <LayersControl.Overlay
+                <LayersControl.BaseLayer
                     name ='Ahojda'
-                    checked={true}
                 >
                     <TileLayer
                         url='https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg'
             	        minZoom= {1}
-                        maxZoom= {16}
+                        maxZoom= {13}
                     />
-                </LayersControl.Overlay>
+                </LayersControl.BaseLayer>
+                <LayersControl.BaseLayer
+                    name ='Mapa2'
+                    checked
+
+                >
+                    <TileLayer
+                        url='https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png'
+            	        minZoom= {1}
+                        maxZoom= {13}
+                    />
+                </LayersControl.BaseLayer>
                 <LayersControl.Overlay name="Marker with popup">
                     <Marker
                         position={[
@@ -95,6 +123,19 @@ function App() {
                             A pretty CSS3 popup. <br /> Easily customizable.
                         </Popup>
                     </Marker>
+                </LayersControl.Overlay>
+
+                <LayersControl.Overlay
+                    name="india"
+                    checked
+                >
+                    <WMSTileLayer
+                        layers={stateLayerName}
+                        format='image/png'
+                        transparent ={false}
+                        version='1.1.0'
+                        url={'http://' + geoServerIPPort + '/geoserver/' + geoServerWorkspace + '/wms'}
+                    />
                 </LayersControl.Overlay>
             </LayersControl>
 
