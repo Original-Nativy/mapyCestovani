@@ -8,7 +8,7 @@ import MarkerClusterGroup from 'react-leaflet-cluster';
 import { Icon } from 'leaflet';
 
 
-export const returnMarkers = (airpotAll: AirportsAll, country: string) => {
+export const returnMarkers = (airpotAll: AirportsAll, country: string, allLayersUnchecked: boolean) => {
     const greenIcon = new Icon({
         iconUrl: '/plane.png',
         iconSize: [
@@ -29,9 +29,12 @@ export const returnMarkers = (airpotAll: AirportsAll, country: string) => {
         objekt.properties.country === country) : [];
     return(
         <LayersControl.Overlay
+            key={country}
             name={country}
+            checked={allLayersUnchecked}
         >
             <MarkerClusterGroup
+                key={country}
                 chunkedLoading
             >{
                     lMarkers.map((marker, id) => (

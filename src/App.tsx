@@ -1,33 +1,33 @@
+/* eslint-disable */
+
 import React, {
-    useEffect, useRef, useState,
+    useEffect, useRef, useState, useCallback,
 } from 'react';
 import {
-    MapContainer, TileLayer, GeoJSON, Marker, Popup, LayersControl,
+    MapContainer, TileLayer, GeoJSON, Marker, Popup, LayersControl, useMap,
 } from 'react-leaflet';
-import { malaysia } from './geomaps/Malaysia';
-import { indonesia } from './geomaps/Indonesia';
-import { thailand } from './geomaps/Thailand';
-import { philippines } from './geomaps/Philippines';
-import { vietnam } from './geomaps/Vietnam';
-import { taiwan } from './geomaps/Taiwan';
-import { hongkong } from './geomaps/Hongkong';
-import { maldives } from './geomaps/Maldives';
-import { airportsAll } from './geomaps/AirportsAll';
-import { uae } from './geomaps/Uae';
-import { israel } from './geomaps/israel';
 import 'leaflet/dist/leaflet.css';
+import { airportsAll } from './geomaps/AirportsAll';
+import { allCountriesFeatures, maps, arrayOfCountries } from './consts/consts';
 import Coordinates, {
     Feature, FeatureMalay, AirportsAll,
 } from './interfaces/Coordinates';
 import './App.css';
-import {
+import L, {
+    Control,
+    ControlOptions,
     Layer, LeafletMouseEvent,
 } from 'leaflet';
 import { returnMarkers } from './components/CreateAirports';
+import { Button, Row, Col, ButtonGroup } from 'reactstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import * as ModulA from 'leaflet.polylinemeasure';
+import 'leaflet.polylinemeasure/Leaflet.PolylineMeasure.css';
+import CustomInput from './components/CustomInput';
 
+const CombinedModule = {...L, ...ModulA};
 
 function App() {
-
     const generateRandomColor = () =>{
         const hue = Math.floor(Math.random() * 360);
         const saturation = 100;
@@ -36,6 +36,7 @@ function App() {
     };
 
     const airpotAll : AirportsAll = airportsAll;
+    const poly = useRef<Control.PolylineMeasure | null>(null);
 
     const [
         center,
@@ -54,21 +55,20 @@ function App() {
     ]=useState<string>('');
 
     const [
+        allAirportsVisible,
+        setAllAirportsVisible,
+    ]=useState<boolean>(false);
+
+    const [
+        allStatesVisible,
+        setAllStatesVisible,
+    ]=useState<boolean>(false);
+
+    const [
         allMaps,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         setAllMaps,
-    ]=useState<{[key:string]: Feature | Feature[] | FeatureMalay[] | unknown}>({
-        'dataIndonesia': indonesia.features,
-        'dataMalaysia': malaysia.features,
-        'dataThailand': thailand.features,
-        'dataPhilippines': philippines.features,
-        'dataVietnam': vietnam.features,
-        'dataTaiwan': taiwan.features,
-        'dataHongkong': hongkong.features,
-        'dataMaldives': maldives.features,
-        'dataUae': uae.features,
-        'dataIsrael': israel.features,
-    });
+    ]= useState<{[key:string]: Feature | Feature[] | FeatureMalay[] | unknown}>(allCountriesFeatures);
 
     const [
         allColors,
@@ -85,16 +85,30 @@ function App() {
         setAllColors(colors);
     }, []);
 
-    const onCountryClick = (event: LeafletMouseEvent) => {
-        setChosenRegion(event.target.feature.properties.name);
-        setTimeout(() => {
-            event.target.setStyle({
-                color: 'green',
-                fillColor: 'green',
-                fillOpacity: 0.5,
-            });
-        }, 1);
-    };
+    const [
+        Map,
+        setMap,
+    ]=useState<L.Map | null>(null);
+
+    const [
+        measurDis,
+        setMeasuringDistance,
+    ]=useState<boolean>(false);
+
+    const [
+        clicked,
+        setClicked,
+    ] = useState<boolean>(false);
+
+    const [
+        value,
+        setValue,
+    ] = useState<string | null>(null);
+
+    const [
+        textFieldContent,
+        setTextFieldContent,
+    ] = useState<string>('');
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const onEachCountry = (feature: GeoJSON.Feature<GeoJSON.Geometry, any> , layer: Layer) => {
@@ -109,6 +123,7 @@ function App() {
                     fillColor: 'red',
                     fillOpacity: 0.5,
                 });
+                layer.bringToFront();
             },
             mouseout: e => {
                 const layer = e.target;
@@ -120,23 +135,86 @@ function App() {
                     fillColor: layer.options.color,
                     fillOpacity: 0.4,
                 });
+                layer.bringToBack();
             },
             click: onCountryClick,
         });
     };
 
-    const arrayOfCountries = [
-        'Thailand',
-        'Philippines',
-        'Maldives',
-        'Malaysia',
-        'Taiwan',
-        'Indonesia',
-        'Vietnam',
-        'United Arab Emirates',
-        'Israel',
-        'Hong Kong',
-    ];
+    const onCountryClick = (event: LeafletMouseEvent) => {
+        setChosenRegion(event.target.feature.properties.name);
+        setTimeout(() => {
+            event.target.setStyle({
+                color: 'green',
+                fillColor: 'green',
+                fillOpacity: 0.5,
+            });
+        }, 1);
+        setTextFieldContent(event.target.feature.properties.name);
+    };
+
+    const options: Control.PolylineMeasureOptions  = {
+        position: 'topleft',
+        unit: 'metres',
+        clearMeasurementsOnStop: false,
+    };
+
+    function MyComponent() {
+        const map = useMap()
+        setMap(map);
+        return null
+    }
+
+    useEffect(() => {
+        if (Map === null) {
+          return;
+        }
+        poly.current = CombinedModule.control.polylineMeasure(options).addTo(Map);
+      },[Map]);
+
+    useEffect(() => {
+        window.addEventListener('click', () => {
+            setMeasuringDistance(!!poly?.current?._measuring);
+        })
+    },[]);
+
+    useEffect(() => {
+        console.log(poly.current);
+        if(!poly.current || !Map || !poly.current._layerPaint) {
+            return;
+        }
+        if(measurDis) {
+            poly.current._layerPaint.addTo(Map);
+        }
+        if(!measurDis) {
+            Map.removeLayer(poly.current._layerPaint);
+        }
+    }, [measurDis]);
+
+    function ShowAllStates() {
+        return (
+            <div className='edit-location-button mb-3'>
+                <ButtonGroup>
+                    <Button
+                        color="primary"
+                        onClick={() => {
+                        setAllAirportsVisible(!allAirportsVisible);
+                    }}
+                    >
+                        All airports
+                    </Button>
+                    <Button
+                        color="success"
+                        onClick={() => {
+                            setAllStatesVisible(!allStatesVisible);
+                        }}
+                    >
+                        All states
+                    </Button>
+                </ButtonGroup>
+            </div>
+        )
+    }
 
     return (
         <MapContainer
@@ -150,6 +228,30 @@ function App() {
                 height: '100vh',
             }}
         >
+        <MyComponent />
+            <LayersControl.Overlay name='inputy'>
+                <ShowAllStates />
+                <Row className="edit-location-input">
+                    <Col>
+                        <CustomInput
+                        readonly
+                        type="text"
+                        placeholder="Selected country"
+                        value={textFieldContent}
+                        name={'selectcountry'}
+                        />
+                    </Col>
+                    <Col>
+                        <CustomInput
+                            onChange={e => { setValue(e); } }
+                            type="text"
+                            placeholder="Enter your text here"
+                            value={value}
+                            name={'searching'}
+                        />
+                    </Col>
+                </Row>
+            </LayersControl.Overlay>
             <LayersControl position="topright">
                 {Object.entries(allMaps).map(([
                     key,
@@ -158,6 +260,7 @@ function App() {
                     <LayersControl.Overlay
                         key={index}
                         name={key}
+                        checked={allStatesVisible}
                     >
                         <GeoJSON
                             key={key}
@@ -179,7 +282,7 @@ function App() {
                     name ='Streets'
                 >
                     <TileLayer
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        url={maps.street}
             	        minZoom= {1}
                         maxZoom= {13}
                     />
@@ -189,20 +292,21 @@ function App() {
                     checked
                 >
                     <TileLayer
-                        url='https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png'
+                        url={maps.empty}
             	        minZoom= {1}
                         maxZoom= {13}
                     />
                 </LayersControl.BaseLayer>
-                <LayersControl.Overlay
-                    name='Airports'
-                >
-                    {arrayOfCountries.map(country => (
-                        returnMarkers(airpotAll, country)))}
-
-                </LayersControl.Overlay>
+            </LayersControl>
+            <LayersControl
+                position="topleft"
+            >
+                {arrayOfCountries.map(country => (
+                    returnMarkers(airpotAll, country, allAirportsVisible)))}
             </LayersControl>
         </MapContainer>
     );
-}
+};
+
 export default App;
+
