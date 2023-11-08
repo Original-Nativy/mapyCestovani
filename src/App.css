@@ -16,11 +16,18 @@
 .edit-location-button {
   position: absolute;
   bottom: 0px;
-  right: 10px!important;
+  right: 10px;
   z-index: 10000;
 }
 
-.edit-location-input {
+.edit-location-button-second {
+  position: absolute;
+  bottom: 50px;
+  right: 10px;
+  z-index: 10000;
+}
+
+.input-location {
   position: absolute;
   bottom: 0px!important;
   padding-bottom: 0!important;
@@ -32,4 +39,18 @@
 .formgroup
 {
   margin-bottom: 0!important;
+}
+
+.spinner-location {
+  position: absolute;
+  bottom: 50%!important;
+  right: 50%!important;
+  z-index: 10000!important;
+}
+
+.dialog-location {
+  position: absolute;
+  bottom: 200px!important;
+  right: 50%!important;
+  z-index: 10000!important;
 }

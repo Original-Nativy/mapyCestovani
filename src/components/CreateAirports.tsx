@@ -5,25 +5,9 @@ import {
     AirportsAll,
 } from '../interfaces/Coordinates';
 import MarkerClusterGroup from 'react-leaflet-cluster';
-import { Icon } from 'leaflet';
-
+import { greenIcon } from '../consts/consts';
 
 export const returnMarkers = (airpotAll: AirportsAll, country: string, allLayersUnchecked: boolean) => {
-    const greenIcon = new Icon({
-        iconUrl: '/plane.png',
-        iconSize: [
-            10,
-            20,
-        ],
-        iconAnchor: [
-            3,
-            10,
-        ],
-        popupAnchor: [
-            0,
-            -5,
-        ],
-    });
 
     const lMarkers = airpotAll ? airpotAll.features.filter(objekt =>
         objekt.properties.country === country) : [];

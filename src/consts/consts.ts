@@ -9,6 +9,8 @@ import { hongkong } from '../geomaps/Hongkong';
 import { maldives } from '../geomaps/Maldives';
 import { uae } from '../geomaps/Uae';
 import { israel } from '../geomaps/israel';
+import { Icon } from 'leaflet';
+
 
 export const allCountriesFeatures ={
     'dataIndonesia': indonesia.features,
@@ -40,3 +42,19 @@ export const arrayOfCountries = [
     'Israel',
     'Hong Kong',
 ];
+
+export const greenIcon = new Icon({
+    iconUrl: '/plane.png',
+    iconSize: [
+        30,
+        30,
+    ],
+    iconAnchor: [
+        3,
+        10,
+    ],
+    popupAnchor: [
+        0,
+        -5,
+    ],
+});

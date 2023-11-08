@@ -2096,6 +2096,13 @@
   resolved "https://registry.yarnpkg.com/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
   integrity sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==
 
+"@types/leaflet-routing-machine@^3.2.7":
+  version "3.2.7"
+  resolved "https://registry.yarnpkg.com/@types/leaflet-routing-machine/-/leaflet-routing-machine-3.2.7.tgz#38d9f54fdaeac68309944f5db3b66a5fc875abef"
+  integrity sha512-jCulVkE26X40zPVL3kDCN7qnsynASoCdVsPjS/JLwBNmr3h7n5xizZscvq88JmjaUi9hgvHSrG4LGkE+APfh9w==
+  dependencies:
+    "@types/leaflet" "*"
+
 "@types/leaflet.polylinemeasure@^1.0.4":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@types/leaflet.polylinemeasure/-/leaflet.polylinemeasure-1.0.4.tgz#479a17dc5b03a2bcfd7e983d5ade2cc9674a48fb"
@@ -6372,6 +6379,13 @@ launch-editor@^2.6.0:
     picocolors "^1.0.0"
     shell-quote "^1.8.1"
 
+leaflet-control-geocoder@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/leaflet-control-geocoder/-/leaflet-control-geocoder-2.4.0.tgz#f6c00ae00b53d2ac5908e874a9aefd414f615f22"
+  integrity sha512-b2QlxuFd40uIDbnoUI3U9fzfnB4yKUYlmsXjquJ2d2YjoJqnyVYcIJeErAVv3kPvX3nI0gzvBq1XHMgSVFrGkQ==
+  optionalDependencies:
+    open-location-code "^1.0.0"
+
 leaflet-routing-machine@^3.2.12:
   version "3.2.12"
   resolved "https://registry.yarnpkg.com/leaflet-routing-machine/-/leaflet-routing-machine-3.2.12.tgz#9e4aef008321b0227cf894d829c3b4c1f13e4e13"
@@ -6918,6 +6932,11 @@ onetime@^5.1.2:
   integrity sha512-kbpaSSGJTWdAY5KPVeMOKXSrPtr8C8C7wodJbcsd51jRnmD+GZu8Y0VoU6Dm5Z4vWr0Ig/1NKuWRKf7j5aaYSg==
   dependencies:
     mimic-fn "^2.1.0"
+
+open-location-code@^1.0.0:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/open-location-code/-/open-location-code-1.0.3.tgz#5ea1a34ee5221c6cafa04392e1bd906fd7488f7e"
+  integrity sha512-DBm14BSn40Ee241n80zIFXIT6+y8Tb0I+jTdosLJ8Sidvr2qONvymwqymVbHV2nS+1gkDZ5eTNpnOIVV0Kn2fw==
 
 open@^8.0.9, open@^8.4.0:
   version "8.4.2"
