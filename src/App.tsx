@@ -8,6 +8,7 @@ import {
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { airportsAll } from './geomaps/AirportsAll';
+import { portsAll } from './geomaps/PortsAll';
 import { allCountriesFeatures, maps, arrayOfCountries } from './consts/consts';
 import Coordinates, {
     Feature, FeatureMalay, AirportsAll,
@@ -21,6 +22,7 @@ import L, {
     Layer, LeafletMouseEvent, bind, latLng,
 } from 'leaflet';
 import { returnMarkers } from './components/CreateAirports';
+import { returnMarkersPorts } from './components/CreateHarbours';
 import { Button, Row, Col, ButtonGroup, Spinner } from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import * as ModulA from 'leaflet.polylinemeasure';
@@ -50,6 +52,7 @@ function App() {
         clearMeasurementsOnStop: false,
     };
     const airpotAll : AirportsAll = airportsAll;
+    const portAll : AirportsAll = portsAll;
     const poly = useRef<Control.PolylineMeasure | null>(null);
     const zooming = useRef<boolean>(false);
     const currentRouteRef = useRef<number | null>(null);
@@ -71,6 +74,11 @@ function App() {
     const [
         allAirportsVisible,
         setAllAirportsVisible,
+    ]=useState<boolean>(false);
+
+    const [
+        allPortsVisible,
+        setAllPortsVisible,
     ]=useState<boolean>(false);
 
     const [
@@ -415,6 +423,14 @@ function App() {
                         All airports
                     </Button>
                     <Button
+                        color="info"
+                        onClick={() => {
+                        setAllPortsVisible(!allPortsVisible);
+                    }}
+                    >
+                        All ports
+                    </Button>
+                    <Button
                         color="secondary"
                         onClick={() => {
                             setAllStatesVisible(!allStatesVisible)
@@ -624,6 +640,12 @@ function App() {
             >
                 {arrayOfCountries.map(country => (
                     returnMarkers(airpotAll, country, allAirportsVisible)))}
+            </LayersControl>
+            <LayersControl
+                position="topleft"
+            >
+                {arrayOfCountries.map(country => (
+                    returnMarkersPorts(portAll, country, allPortsVisible)))}
             </LayersControl>
         </MapContainer>
     );

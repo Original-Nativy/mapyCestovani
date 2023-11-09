@@ -102,3 +102,35 @@ export interface AirportsAll {
   }
 
 
+// export interface PortAllFeature {
+//     type: string;
+//     geometry: {
+//       type: string;
+//       coordinates: number[][][];
+//     };
+//     properties: {
+//       scalerank: number | null;
+//       name: string | null;
+//       website: string | null;
+//       natlscale: number | null;
+//       featureclass: string | null;
+//     };
+//   }
+
+export interface PortAllFeature {
+    type: string;
+    geometry: {
+      type: string;
+      coordinates: number[];
+    };
+    properties: {
+      Name: string | null;
+      PortAuthority: string | null;
+
+    };
+  }
+export interface PortsAll {
+    type: string;
+    features: PortAllFeature[];
+  }
+
